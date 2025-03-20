@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', credentialsId: 'github-creds', url: 'https://github.com/abhishekadhikaricubastion/dev_jute_smart.git'
+                git branch: 'main', credentialsId: 'github-creds', url: 'https://github.com/srinivas25010001/dev_jute_smart.git'
             }
         }
 
@@ -30,7 +30,7 @@ pipeline {
                             "branch": "version-15"
                         },
                         {
-                            "url": "https://srinivas25010001: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@github.com/abhishekadhikaricubastion/dev_jute_smart.git",
+                            "url": "https://srinivas25010001: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@github.com/srinivas25010001/dev_jute_smart.git",
                             "branch": "main"
                         }
                     ]
