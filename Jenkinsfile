@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', credentialsId: 'github-creds', url: 'https://github.com/srinivas25010001/dev_jute_smart.git'
+                git branch: 'main', url: 'https://srinivas25010001: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@github.com/srinivas25010001/dev_jute_smart.git'
             }
         }
 
