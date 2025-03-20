@@ -30,7 +30,7 @@ pipeline {
                             "branch": "version-15"
                         },
                         {
-                            "url": "https://srinivas25010001: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@github.com/srinivas25010001/dev_jute_smart.git",
+                            "url": "https://srinivas25010001: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@github.com/srinivas25010001/dev_jute_smart.git",
                             "branch": "main"
                         }
                     ]
