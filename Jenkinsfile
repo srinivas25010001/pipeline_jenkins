@@ -4,12 +4,13 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = 'docker-hub-creds'
         IMAGE_NAME = 'srinivas0001/jute_2'
+        GITHUB_CREDENTIALS = 'github-creds'
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://srinivas25010001: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@github.com/srinivas25010001/dev_jute_smart.git'
+                git branch: 'main', credentialsId: GITHUB_CREDENTIALS, url: 'https://github.com/srinivas25010001/dev_jute_smart.git'
             }
         }
 
@@ -23,19 +24,21 @@ pipeline {
         stage('Create apps.json') {
             steps {
                 script {
-                    def appsJsonContent = '''
-                    [
-                        {
-                            "url": "https://github.com/frappe/erpnext",
-                            "branch": "version-15"
-                        },
-                        {
-                            "url": "https://srinivas25010001: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@github.com/srinivas25010001/dev_jute_smart.git",
-                            "branch": "main"
-                        }
-                    ]
-                    '''
-                    writeFile(file: 'apps.json', text: appsJsonContent)
+                    withCredentials([usernamePassword(credentialsId: GITHUB_CREDENTIALS, usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                        def appsJsonContent = """
+                        [
+                            {
+                                "url": "https://github.com/frappe/erpnext",
+                                "branch": "version-15"
+                            },
+                            {
+                                "url": "https://${GIT_USER}:${GIT_PASS}@github.com/srinivas25010001/dev_jute_smart.git",
+                                "branch": "main"
+                            }
+                        ]
+                        """
+                        writeFile(file: 'apps.json', text: appsJsonContent)
+                    }
                 }
             }
         }
@@ -52,7 +55,7 @@ pipeline {
             steps {
                 script {
                     def appsJsonBase64 = sh(script: "cat apps.json.b64", returnStdout: true).trim()
-                    dir('frappe_docker') { // Ensure the correct context
+                    dir('frappe_docker') {
                         sh """
                             sudo docker build \\
                               --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \\
