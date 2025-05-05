@@ -52,24 +52,27 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            steps {
-                script {
-                    def appsJsonBase64 = sh(script: "cat apps.json.b64", returnStdout: true).trim()
-                    dir('frappe_docker') {
-                        sh """
-                            sudo docker build \\
-                              --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \\
-                              --build-arg=FRAPPE_BRANCH=version-15 \\
-                              --build-arg=PYTHON_VERSION=3.11.6 \\
-                              --build-arg=NODE_VERSION=18.18.2 \\
-                              --build-arg=APPS_JSON_BASE64=${appsJsonBase64} \\
-                              --tag=${IMAGE_NAME}:latest \\
-                              --file=images/custom/Containerfile .
-                        """
-                    }
-                }
+    steps {
+        script {
+            def appsJsonBase64 = sh(script: "cat apps.json.b64", returnStdout: true).trim()
+            dir('frappe_docker') {
+                sh """
+                    sudo docker buildx build \
+                      --platform=linux/amd64 \
+                      --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \
+                      --build-arg=FRAPPE_BRANCH=version-15 \
+                      --build-arg=PYTHON_VERSION=3.11.6 \
+                      --build-arg=NODE_VERSION=18.18.2 \
+                      --build-arg=APPS_JSON_BASE64=${appsJsonBase64} \
+                      --tag=${IMAGE_NAME}:latest \
+                      --file=images/custom/Containerfile \
+                      --push .
+                """
             }
         }
+    }
+}
+
 
         stage('Login to Docker Hub') {
             steps {
