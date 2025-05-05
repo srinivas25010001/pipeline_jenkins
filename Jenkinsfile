@@ -86,14 +86,14 @@ pipeline {
         stage('Push Image to Docker Hub') {
             steps {
                 script {
-                    sh "sudo docker push ${IMAGE_NAME}:latest"
+                    sh "docker push ${IMAGE_NAME}:latest"
                 }
             }
         }
 
         stage('Cleanup') {
             steps {
-                sh "sudo docker rmi ${IMAGE_NAME}:latest || true"
+                sh "docker rmi ${IMAGE_NAME}:latest || true"
             }
         }
     }
