@@ -66,7 +66,6 @@ pipeline {
                       --build-arg=APPS_JSON_BASE64=${appsJsonBase64} \
                       --tag=${IMAGE_NAME}:latest \
                       --file=images/custom/Containerfile \
-                      --push .
                 """
             }
         }
