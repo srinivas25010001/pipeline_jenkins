@@ -59,6 +59,8 @@ pipeline {
                 sh """
                     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                     docker buildx create --use --name mybuilder || true
+                    docker buildx inspect mybuilder --bootstrap
+
                 """
             }
         }
