@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = 'docker-hub-creds'
-        IMAGE_NAME = 'srinivas0001/jute_10'
+        IMAGE_NAME = 'srinivas0001/jute_11'
         GITHUB_CREDENTIALS = 'github-creds'
     }
 
