@@ -65,7 +65,8 @@ pipeline {
                       --build-arg=NODE_VERSION=18.18.2 \
                       --build-arg=APPS_JSON_BASE64=${appsJsonBase64} \
                       --tag=${IMAGE_NAME}:latest \
-                      --file=images/custom/Containerfile .
+                      --file=images/custom/Containerfile \
+                      --load .
                 """
             }
         }
