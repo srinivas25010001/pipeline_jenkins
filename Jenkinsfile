@@ -51,6 +51,17 @@ pipeline {
             }
         }
 
+        
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                    }
+                }
+            }
+        }
+        
         stage('Build Docker Image') {
     steps {
         script {
@@ -66,7 +77,7 @@ pipeline {
                       --build-arg=APPS_JSON_BASE64=${appsJsonBase64} \
                       --tag=${IMAGE_NAME}:latest \
                       --file=images/custom/Containerfile \
-                      --load .
+                      --push .
                 """
             }
         }
@@ -74,23 +85,6 @@ pipeline {
 }
 
 
-        stage('Login to Docker Hub') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
-                    }
-                }
-            }
-        }
-
-        stage('Push Image to Docker Hub') {
-            steps {
-                script {
-                    sh "docker push ${IMAGE_NAME}:latest"
-                }
-            }
-        }
 
         stage('Cleanup') {
             steps {
