@@ -52,23 +52,27 @@ pipeline {
         }
 
         
-        stage('Login to Docker Hub') {
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
-                    }
-                }
+      stage('Login to Docker Hub') {
+    steps {
+        script {
+            withCredentials([usernamePassword(credentialsId: DOCKERHUB_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                sh """
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker buildx create --use --name mybuilder || true
+                """
             }
         }
-        
-        stage('Build Docker Image') {
+    }
+}
+
+stage('Build and Push Docker Image') {
     steps {
         script {
             def appsJsonBase64 = sh(script: "cat apps.json.b64", returnStdout: true).trim()
             dir('frappe_docker') {
                 sh """
-                    sudo docker buildx build \
+                    docker buildx use mybuilder
+                    docker buildx build \
                       --platform=linux/amd64 \
                       --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \
                       --build-arg=FRAPPE_BRANCH=version-15 \
@@ -83,7 +87,6 @@ pipeline {
         }
     }
 }
-
 
 
         stage('Cleanup') {
