@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = 'docker-hub-creds'
-        IMAGE_NAME = 'srinivas0001/test1'
+        IMAGE_NAME = 'srinivas0001/test'
         GITHUB_CREDENTIALS = 'github-creds'
     }
 
@@ -75,7 +75,7 @@ stage('Build and Push Docker Image') {
                 sh """
                     docker buildx use mybuilder
                     docker buildx build \
-                      --platform=linux/amd64 \
+                      --platform=linux/amd64,linux/arm64 \
                       --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \
                       --build-arg=FRAPPE_BRANCH=version-15 \
                       --build-arg=PYTHON_VERSION=3.11.6 \
