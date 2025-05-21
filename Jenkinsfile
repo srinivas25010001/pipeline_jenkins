@@ -2,16 +2,22 @@ pipeline {
     agent any
 
     environment {
-        HARBOR_CREDENTIALS = 'harbor-creds' // Jenkins credentials ID for Harbor (username + password)
-        IMAGE_NAME = '10.212.132.157/demo/test1' // Harbor image path
+        HARBOR_CREDENTIALS = 'harbor-creds' // Jenkins credentials ID (username + password for Harbor)
+        IMAGE_NAME = '10.212.132.157:80/srinivas0001/test:latest'
         GITHUB_CREDENTIALS = 'github-creds'
-        FRAPPE_DOCKER_PATH = '/home/RAKPATE/frappe_docker'
     }
 
     stages {
-        stage('Clone App Repository') {
+        stage('Clone Repository') {
             steps {
                 git branch: 'main', credentialsId: GITHUB_CREDENTIALS, url: 'https://github.com/srinivas25010001/dev_jute_smart.git'
+            }
+        }
+
+        stage('Clone frappe_docker') {
+            steps {
+                sh 'rm -rf frappe_docker || true'
+                sh 'git clone https://github.com/frappe/frappe_docker'
             }
         }
 
@@ -48,7 +54,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: HARBOR_CREDENTIALS, usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                         sh """
-                            echo "$HARBOR_PASS" | docker login 10.212.132.157 -u "$HARBOR_USER" --password-stdin
+                            echo "$HARBOR_PASS" | docker login 10.212.132.157:80 -u "$HARBOR_USER" --password-stdin
                             docker buildx create --use --name mybuilder || true
                             docker buildx inspect mybuilder --bootstrap
                         """
@@ -57,11 +63,11 @@ pipeline {
             }
         }
 
-        stage('Build and Push Multi-Arch Image') {
+        stage('Build and Push Docker Image') {
             steps {
                 script {
                     def appsJsonBase64 = sh(script: "cat apps.json.b64", returnStdout: true).trim()
-                    dir("${FRAPPE_DOCKER_PATH}") {
+                    dir('frappe_docker') {
                         sh """
                             docker buildx use mybuilder
                             docker buildx build \
@@ -83,7 +89,7 @@ pipeline {
 
     post {
         success {
-            echo "✅ Multi-arch Docker image built and pushed to Harbor successfully!"
+            echo "✅ Build and push to Harbor completed successfully!"
         }
         failure {
             echo "❌ Build or push failed."
