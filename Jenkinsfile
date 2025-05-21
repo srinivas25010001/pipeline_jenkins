@@ -2,22 +2,16 @@ pipeline {
     agent any
 
     environment {
-        HARBOR_CREDENTIALS = 'harbor-creds' // Jenkins credentials ID (username + password for Harbor)
-        IMAGE_NAME = '10.212.132.157/demo/test1'
+        HARBOR_CREDENTIALS = 'harbor-creds' // Jenkins credentials ID for Harbor (username + password)
+        IMAGE_NAME = '10.212.132.157/demo/test1' // Harbor image path
         GITHUB_CREDENTIALS = 'github-creds'
+        FRAPPE_DOCKER_PATH = '/home/RAKPATE/frappe_docker'
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('Clone App Repository') {
             steps {
                 git branch: 'main', credentialsId: GITHUB_CREDENTIALS, url: 'https://github.com/srinivas25010001/dev_jute_smart.git'
-            }
-        }
-
-        stage('Clone frappe_docker') {
-            steps {
-                sh 'rm -rf frappe_docker || true'
-                sh 'git clone https://github.com/frappe/frappe_docker'
             }
         }
 
@@ -63,11 +57,11 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image') {
+        stage('Build and Push Multi-Arch Image') {
             steps {
                 script {
                     def appsJsonBase64 = sh(script: "cat apps.json.b64", returnStdout: true).trim()
-                    dir('frappe_docker') {
+                    dir("${FRAPPE_DOCKER_PATH}") {
                         sh """
                             docker buildx use mybuilder
                             docker buildx build \
@@ -89,7 +83,7 @@ pipeline {
 
     post {
         success {
-            echo "✅ Build and push to Harbor completed successfully!"
+            echo "✅ Multi-arch Docker image built and pushed to Harbor successfully!"
         }
         failure {
             echo "❌ Build or push failed."
