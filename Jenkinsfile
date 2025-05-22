@@ -17,7 +17,7 @@ pipeline {
         stage('Clone frappe_docker') {
             steps {
                 sh 'rm -rf frappe_docker || true'
-                sh 'git clone https://github.com/frappe/frappe_docker'
+                sh 'git clone git@github.com:frappe/frappe_docker.git'
             }
         }
 
