@@ -54,7 +54,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: HARBOR_CREDENTIALS, usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                         sh """
-                            echo "$HARBOR_PASS" | docker login https://10.212.132.157 -u "$HARBOR_USER" --password-stdin
+                            echo "$HARBOR_PASS" | docker login 10.212.132.157 -u "$HARBOR_USER" --password-stdin
                             docker buildx create --use --name mybuilder || true
                             docker buildx inspect mybuilder --bootstrap
                         """
