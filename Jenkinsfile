@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         HARBOR_CREDENTIALS = 'harbor-creds' // Jenkins credentials ID (username + password for Harbor)
-        IMAGE_NAME = '10.212.132.157:80/srinivas0001/test:latest'
+        IMAGE_NAME = '10.212.132.157/srinivas0001/test:latest'
         GITHUB_CREDENTIALS = 'github-creds'
     }
 
@@ -54,7 +54,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: HARBOR_CREDENTIALS, usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                         sh """
-                            echo "$HARBOR_PASS" | docker login 10.212.132.157:80 -u "$HARBOR_USER" --password-stdin
+                            echo "$HARBOR_PASS" | docker login 10.212.132.157 -u "$HARBOR_USER" --password-stdin
                             docker buildx create --use --name mybuilder || true
                             docker buildx inspect mybuilder --bootstrap
                         """
@@ -89,10 +89,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Build and push to Harbor completed successfully!"
+            echo "Build and push to Harbor completed successfully!"
         }
         failure {
-            echo "❌ Build or push failed."
+            echo "Build or push failed."
         }
     }
 }
