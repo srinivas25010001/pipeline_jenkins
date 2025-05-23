@@ -56,7 +56,6 @@ pipeline {
                         sh """
                             echo "$HARBOR_PASS" | docker login 10.212.132.157 -u "$HARBOR_USER" --password-stdin
                             docker buildx create --use --name mybuilder || true
-                            docker buildx inspect mybuilder --bootstrap
                         """
                     }
                 }
