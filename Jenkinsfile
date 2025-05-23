@@ -5,16 +5,10 @@ pipeline {
         HARBOR_CREDENTIALS = 'harbor-creds'
         IMAGE_NAME = '10.212.132.157/srinivas0001/test:latest'
         GITHUB_CREDENTIALS = 'github-creds'
-        FRAPPE_DOCKER_PATH = '/home/RAKPATE/frappe_docker'
+        FRAPPE_DOCKER_PATH = 'frappe_docker'
     }
 
     stages {
-        stage('Clean Workspace') {
-            steps {
-                deleteDir()
-            }
-        }
-
         stage('Clone dev_jute_smart App') {
             steps {
                 git branch: 'main', credentialsId: GITHUB_CREDENTIALS, url: 'https://github.com/srinivas25010001/dev_jute_smart.git'
