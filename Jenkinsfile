@@ -56,26 +56,28 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            steps {
-                script {
-                    def appsJsonBase64 = sh(script: "cat apps.json.b64", returnStdout: true).trim()
-                    dir("${FRAPPE_DOCKER_PATH}") {
-                        // Build for single platform first (amd64)
-                        sh """
-                            docker build \
-                              --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \
-                              --build-arg=FRAPPE_BRANCH=version-15 \
-                              --build-arg=PYTHON_VERSION=3.11.6 \
-                              --build-arg=NODE_VERSION=18.18.2 \
-                              --build-arg=APPS_JSON_BASE64=${appsJsonBase64} \
-                              --tag=${IMAGE_NAME} \
-                              --file=images/custom/Containerfile \
-                              .
-                        """
-                    }
-                }
+    steps {
+        script {
+            def appsJsonBase64 = sh(script: "cat apps.json.b64", returnStdout: true).trim()
+            dir("${FRAPPE_DOCKER_PATH}") {
+                sh """
+                    docker build \
+                      --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \
+                      --build-arg=FRAPPE_BRANCH=version-15 \
+                      --build-arg=PYTHON_VERSION=3.11.6 \
+                      --build-arg=NODE_VERSION=18.18.2 \
+                      --build-arg=WKHTMLTOPDF_VERSION=0.12.6-1 \
+                      --build-arg=WKHTMLTOPDF_DISTRO=buster \
+                      --build-arg=APPS_JSON_BASE64='${appsJsonBase64}' \
+                      --tag=${IMAGE_NAME} \
+                      --file=images/custom/Containerfile \
+                      .
+                """
             }
         }
+    }
+}
+
 
         stage('Push Docker Image') {
             steps {
