@@ -69,8 +69,8 @@ pipeline {
                       --build-arg=FRAPPE_BRANCH=version-15 \
                       --build-arg=PYTHON_VERSION=3.11.6 \
                       --build-arg=NODE_VERSION=18.18.2 \
-                      --build-arg=WKHTMLTOPDF_VERSION=0.12.6-1 \
-                      --build-arg=WKHTMLTOPDF_DISTRO=buster \
+                     // --build-arg=WKHTMLTOPDF_VERSION=0.12.6-1 \
+                     // --build-arg=WKHTMLTOPDF_DISTRO=buster \
                       --build-arg=APPS_JSON_BASE64='${appsJsonBase64}' \
                       --tag=${IMAGE_NAME} \
                       --file=images/custom/Containerfile \
