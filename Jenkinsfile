@@ -61,7 +61,6 @@ pipeline {
             def appsJsonBase64 = sh(script: "cat apps.json.b64", returnStdout: true).trim()
             dir("${FRAPPE_DOCKER_PATH}") {
                 sh """
-                    export DOCKER_BUILDKIT=0
                     docker build \
                       --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \
                       --build-arg=FRAPPE_BRANCH=version-15 \
